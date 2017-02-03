@@ -1,0 +1,40 @@
+body {
+  background-color: #f3f3f3;
+  color: #EB5757;
+  font-family: 'Gentium Basic', serif;
+}
+.page-container {
+  background-color: white;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px;
+  text-align: center;
+}
+.page-container p {
+  color: #3c3c3c;
+}
+.full-width {
+  width: 100%;
+}
+.buy-wrapper .receipt-line {
+  color: #666;
+  font-size: 12px;
+  text-align: center;
+  max-width: 350px;
+  margin: 5px auto;
+}
+.buy-wrapper .receipt-line strong {
+  color: #EB5757;
+  display: inline-block;
+}
+a {
+  color: #EB5757;
+  border-bottom: 1px solid #EB5757;
+  cursor: pointer;
+}
+a:hover {
+  color: #EB5757;
+}
+.hidden {
+  display: none !important;
+}
