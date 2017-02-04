@@ -38,3 +38,9 @@ a:hover {
 .hidden {
   display: none !important;
 }
+
+.buy-wrapper {
+  font-family: 'Source Sans Pro', sans-serif;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}

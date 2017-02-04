@@ -1,15 +1,12 @@
-function onebutton(config) {
+onebutton = function(config) {
   this.config = config;
   this.create = function() {
     var self = this;
+    // Generate the button html
+    $('#' + this.config.containerId).html(self.generateButton());
 
-    $('.onebutton').each(function(index, button) {
-      // Generate the button html
-      $(button).html(self.generateButton());
-
-      // Bind the events to the button
-      self.initialiseEvents();
-    });
+    // Bind the events to the button
+    self.initialiseEvents();
   };
   this.step = 1;
   this.nextStep = function() {
@@ -18,27 +15,31 @@ function onebutton(config) {
       var prevStep = this.config.steps[this.step-2];
       var prevStepClassName = toId(prevStep.name);
 
-      $("#" + this.config.containerId + " .start-buy").addClass("hidden");
-      $('#' + this.config.containerId + ' .buy-preview').addClass("hidden");
-      $('#' + this.config.containerId + ' .buy-input').addClass("hidden");
+
+      $("#" + this.config.containerId + " .onebtn-button").addClass('onebtn-hidden');
+      $('#' + this.config.containerId + ' .onebtn-preview').addClass('onebtn-hidden');
+      $('#' + this.config.containerId + ' .onebtn-input-wrapper').addClass('onebtn-hidden');
 
       var self = this;
-      $("#" + this.config.containerId + " .buy-button-wrapper").animate({
+      $("#" + self.config.containerId + " .onebtn-button-wrapper").animate({
         width: "50px"
       }, 500, function() {
         // Animation complete.
       });
 
-      $("#" + this.config.containerId + " .processing").removeClass("hidden");
+      $("#" + self.config.containerId + " .onebtn-button").empty();
+      $("#" + self.config.containerId + " .processing").removeClass('onebtn-hidden');
 
       setTimeout(function () {
-        $("#" + self.config.containerId + " .buy-button-wrapper").animate({
+
+        $("#" + self.config.containerId + " .onebtn-inner").animate({
           width: "150px",backgroundColor: "#44cc4f"
         }, 500, function() {
           // Animation complete.
-          $("#" + self.config.containerId + " .start-buy").html(self.config.successText);
-          $("#" + self.config.containerId + " .processing").addClass("hidden");
-          $("#" + self.config.containerId + " .start-buy").removeClass("hidden");
+          console.log("Finished");
+          $("#" + self.config.containerId + " .onebtn-button").html(self.config.successText);
+          $("#" + self.config.containerId + " .processing").addClass('onebtn-hidden');
+          $("#" + self.config.containerId + " .onebtn-button").removeClass('onebtn-hidden');
 
           self.config.successAction();
         });
@@ -55,22 +56,32 @@ function onebutton(config) {
         var prevStepClassName = toId(prevStep.name);
 
         if(thisStep.actionText) {
-          $("#" + this.config.containerId + " .start-buy").text(thisStep.actionText);
+          $("#" + this.config.containerId + " .onebtn-button").text(thisStep.actionText);
         }
 
         prevStep.value = $('.' + prevStepClassName  + ' input[type="text"]').val();
         prevStep.action(prevStep.value);
-        $("#" + this.config.containerId + ' .' + prevStepClassName + '-preview').text(prevStep.value.substring(0, prevStep.previewLength));
-        $("#" + this.config.containerId + ' .' + prevStepClassName).addClass("hidden");
-        $("#" + this.config.containerId + ' .' + prevStepClassName + '-preview').removeClass("hidden");
 
-        $("#" + this.config.containerId + ' .' + thisStepClassName).removeClass("hidden");
+        if(prevStep.previewLength && (prevStep.previewStyle==='text') ) {
+          $("#" + this.config.containerId + ' .' + prevStepClassName + '-preview').text(prevStep.value.substring(0, prevStep.previewLength));
+        }
+        else if (prevStep.previewStyle==='icon') {
+          $("#" + this.config.containerId + ' .' + prevStepClassName + '-preview').html('<i class="material-icons onebtn-icon-subtle">' + prevStep.icon + '</i>');
+        }
+        else {
+          $("#" + this.config.containerId + ' .' + prevStepClassName + '-preview').html('<i class="material-icons onebtn-icon-subtle">remove</i>');
+        }
+
+        $("#" + this.config.containerId + ' .' + prevStepClassName).addClass('onebtn-hidden');
+        $("#" + this.config.containerId + ' .' + prevStepClassName + '-preview').removeClass('onebtn-hidden');
+
+        $("#" + this.config.containerId + ' .' + thisStepClassName).removeClass('onebtn-hidden');
         $("#" + this.config.containerId + ' .' + thisStepClassName + " input").focus();
       }
       else {
         // expand button
-        $("#" + this.config.containerId + " .buy-button-wrapper").animate({
-          width: "340px"
+        $("#" + this.config.containerId + " .onebtn-button-wrapper").animate({
+          width: "90%"
         }, 500, function() {
           // Animation complete.
         });
@@ -78,13 +89,13 @@ function onebutton(config) {
         this.config.initialAction();
 
         if(thisStep.actionText) {
-          $("#" + this.config.containerId + " .start-buy").text(thisStep.actionText);
+          $("#" + this.config.containerId + " .onebtn-button").text(thisStep.actionText);
         }
         else {
-          $("#" + this.config.containerId + " .start-buy").text(this.config.defaultStepActionText);
+          $("#" + this.config.containerId + " .onebtn-button").text(this.config.defaultStepActionText);
         }
 
-        $("#" + this.config.containerId + " ." + thisStepClassName).removeClass("hidden");
+        $("#" + this.config.containerId + " ." + thisStepClassName).removeClass('onebtn-hidden');
         $("#" + this.config.containerId + " ." + thisStepClassName + " input").focus();
       }
     }
@@ -93,42 +104,40 @@ function onebutton(config) {
   };
   this.initialiseEvents = function() {
     var self = this;
-    $("#buy-little-emotions .start-buy").on("click", function() {
+    $('#' + self.config.containerId).on('click', function(button) {
+      $(this).addClass('onebtn-active');
       self.nextStep();
+    });
+
+    $('#' + self.config.containerId).on('keypress', function (e) {
+      if(e.which === 13){
+         //Disable textbox to prevent multiple submit
+         $(this).attr("disabled", "disabled");
+         //Do Stuff, submit, etc..
+         self.nextStep();
+      }
     });
   };
   this.generateButton = function() {
-    var buttonHTML = '<div class="buy-button-container">';
-    buttonHTML += '<div class="buy-button-wrapper">';
+    var buttonHTML = '<div class="onebtn-inner">';
 
-    var step = this.config.steps[0];
-    var buttonId = toId(step.name);
-
+    this.config.steps.forEach(function(step) {
     // generate input
-    buttonHTML += '<div class="buy-input ' + buttonId + ' hidden animated zoomIn">';
-    buttonHTML += '<i class="material-icons">' + step.icon + '</i>';
-    buttonHTML += '<input type="text" name="' + buttonId + '" value="" placeholder="' + step.placeholder + '">';
-    buttonHTML += '</div>';
+        buttonHTML += '<div class="onebtn-input-wrapper ' + toId(step.name) + ' onebtn-hidden animated zoomIn">';
+        buttonHTML += '<div class="onebtn-input-icon"><i class="material-icons">' + step.icon + '</i></div>';
+        buttonHTML += '<input type="text" name="' + toId(step.name) + '" value="" placeholder="' + step.placeholder + '">';
+        buttonHTML += '</div>';
 
-    // generate preview
-    buttonHTML += '<div class="buy-preview ' + buttonId + '-preview hidden animated pulse">';
-    buttonHTML += '</div>';
+        // generate preview
+        buttonHTML += '<div class="onebtn-preview ' + toId(step.name) + '-preview onebtn-hidden animated pulse">';
+        buttonHTML += '</div>';
+    });
 
-    buttonHTML += '<div class="buy-preview card-expiry-preview hidden animated pulse">';
-    buttonHTML += '09/19';
+
+    buttonHTML += '<div class="processing onebtn-hidden">';
+    buttonHTML += '<img src="images/puff.svg" alt="" />';
     buttonHTML += '</div>';
-    buttonHTML += '<div class="buy-input card-expiry hidden animated zoomIn">';
-    buttonHTML += '<i class="material-icons">date_range</i>';
-    buttonHTML += '<input type="text" name="name" value="" placeholder="MM/YY">';
-    buttonHTML += '</div>';
-    buttonHTML += '<div class="buy-input card-cvv hidden animated zoomIn">';
-    buttonHTML += '<i class="material-icons">lock_outline</i>';
-    buttonHTML += '<input type="text" name="name" value="" placeholder="•••">';
-    buttonHTML += '</div>';
-    buttonHTML += '<div class="processing hidden">';
-    buttonHTML += '<img src="/images/puff.svg" alt="" />';
-    buttonHTML += '</div>';
-    buttonHTML += '<div class="button start-buy" >' + this.config.initialText + '</div>';
+    buttonHTML += '<div class="onebtn-button" >' + this.config.initialText + '</div>';
     buttonHTML += '</div>';
     buttonHTML += '</div>';
 

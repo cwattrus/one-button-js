@@ -1,52 +1,41 @@
 var config = {
   'containerId': 'buy-little-emotions-button',
-  'initialText': 'Download $2',
+  'initialText': 'Download for $2',
   'initialAction': function() {
     $("#buy-little-emotions .receipt-line").removeClass('hidden');
   },
   'defaultStepActionText': 'Next',
   'steps': [
     {
-      'icon': 'credit_card',
+      'icon': 'email',
       'maxLength': 16,
-      'name': 'Card number',
+      'name': 'Email address',
       'value': '',
-      'placeholder': '•••• •••• •••• ••••',
+      'placeholder': 'Enter your email...',
       'action': function(data) {
         console.log(data);
       },
-      'previewLength': 8
+      'previewStyle': 'icon'
     },
     {
-      'icon': 'date_range',
+      'icon': 'face',
       'maxlength': 5,
-      'name': 'Card Expiry',
+      'name': 'Name',
       'value': '',
-      'placeholder': 'MM/YY',
+      'placeholder': 'Your name',
       'action': function(data) {
         console.log(data);
       },
-      'previewLength': 5
-    },
-    {
-      'icon': 'lock_outline',
-      'maxlength': 3,
-      'name': 'Card CVV',
-      'value': '',
-      'placeholder': '•••',
-      'actionText': 'Buy',
-      'action': function(data) {
-        $("#buy-little-emotions .receipt-line").html("Preparing download");
-      },
-      'previewLength': 3
+      'previewStyle': 'icon'
     }
   ],
   'finaliseAction': function() {
     $("#buy-little-emotions .receipt-line").html("<a>Request email receipt</a>");
   },
-  'successText': '<i class="material-icons">file_download</i> download',
+  'successText': '<i class="material-icons">file_download</i> Download',
   'successAction': function() {
     // TODO: Add the download action
+    return true;
   }
 }
 
